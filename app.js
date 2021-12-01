@@ -57,6 +57,7 @@ app.route("/userregister")
     username: req.body.username,
     password: req.body.password
   })
+  user.save();
   res.sendFile(__dirname + "/userPage.html");
 });
 
@@ -65,7 +66,26 @@ app.route("/userlogin")
   res.sendFile(__dirname + "/userLogin.html");
 })
 .post((req, res) => {
-  res.sendFile(__dirname + "/userPage.html");
+  User.findOne({username: req.body.username}, (error, foundUser) => {
+    if (error) res.send(error);
+    else {
+      if (!foundUser) {
+        res.render("response.ejs", {content: "You are not registered."});
+      }
+      else {
+        // console.log(foundUser);
+        // console.log(req.body.password);
+        // console.log(foundUser.username);
+        if (foundUser.password == req.body.password) {
+          res.sendFile(__dirname + "/userPage.html");
+        }
+        else {
+          res.render("response.ejs", {content: "You Entered incorrect password"});
+        }
+      }
+      
+    }
+  })
 })
 
 app.route("/adminlogin")
