@@ -24,6 +24,10 @@ const userSchema = new mongoose.Schema({
   username: String,
   password: String
 })
+const adminSchema = new mongoose.Schema({
+  username: String,
+  password: String
+})
 const ticketSchema = new mongoose.Schema({
   username: String,
   number: Number,
@@ -39,6 +43,7 @@ const ticketSchema = new mongoose.Schema({
 
 const Train = new mongoose.model("train", trainSchema);
 const User = new mongoose.model("user", userSchema);
+const Admin = new mongoose.model("admin", adminSchema);
 const Ticket = new mongoose.model("ticket", ticketSchema);
 
 // This object is used for booking purpose
@@ -73,9 +78,6 @@ app.route("/userlogin")
         res.render("response.ejs", {content: "You are not registered."});
       }
       else {
-        // console.log(foundUser);
-        // console.log(req.body.password);
-        // console.log(foundUser.username);
         if (foundUser.password == req.body.password) {
           res.sendFile(__dirname + "/userPage.html");
         }
@@ -93,7 +95,22 @@ app.route("/adminlogin")
   res.sendFile(__dirname + "/adminLogin.html");
 })
 .post((req, res) => {
-  res.sendFile(__dirname + "/adminpage.html");
+  Admin.findOne({username: req.body.username}, (error, foundAdmin) => {
+    if (error) res.send(error);
+    else {
+      if (!foundAdmin) {
+        res.render("response.ejs", {content: "You are not registered."});
+      }
+      else {
+        if (foundAdmin.password == req.body.password) {
+          res.sendFile(__dirname + "/adminPage.html");
+        }
+        else {
+          res.render("response.ejs", {content: "You Entered incorrect password"});
+        }
+      }
+    }
+  });
 })
 
 app.route("/addtrain")
