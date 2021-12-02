@@ -132,7 +132,7 @@ app.route("/addtrain")
 
   newTrain.save((error) => {
     if (error) res.send(error);
-    else res.sendFile(__dirname + "/adminpage.html");
+    else res.render("response.ejs", {content: "Train added successufully."});
   });
 })
 
@@ -175,7 +175,7 @@ app.route("/bookticket")
 .post((req, res) => {
   const newAvailable = current.available - req.body.seats
   if (newAvailable < 0) {
-    res.send('<div class="page-header"><h1>Sorry for inconvenience. Ticket not available in desired quantity.</h1></div>')
+    res.render("response.ejs", {content: "Ticket booked successfully"});
   }
   const ticket = new Ticket({
     username: req.body.username,
@@ -225,7 +225,7 @@ app.route("/reshedule")
       res.send(foundTrain);
     }
   })
-  res.sendFile(__dirname + "/adminPage.html");
+  res.render("response.ejs", {content: "Train rescheduled successfully."});
 });
 
 app.route("/cancelticket")
@@ -236,7 +236,7 @@ app.route("/cancelticket")
   Ticket.findByIdAndRemove(req.body.pnr, (error, ticket) => {
     if (error) res.send(error);
     else {
-      res.sendFile(__dirname + "/userPage.html");
+      res.render("response.ejs", {content: "Ticket cancelled successfully."});
     }
   });
 })
